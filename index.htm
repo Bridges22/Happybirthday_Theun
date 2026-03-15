@@ -406,8 +406,14 @@
             cursor: grab;
             user-select: none;
             touch-action: none;
-            transition: box-shadow 0.2s;
+            transition: box-shadow 0.2s, opacity 2s ease, transform 2s ease;
             border-radius: 2px;
+        }
+
+        .polaroid.fade-out {
+            opacity: 0;
+            pointer-events: none;
+            transform: scale(0.8) rotate(0deg) !important;
         }
 
         .polaroid:active {
@@ -819,6 +825,15 @@ Today is your day. Enjoy every moment. ❤️`;
                         initNameInStars();           // ← particles form her name
                         spawnFireflies();            // ← NEW: fireflies background
                         spawnFloatingWishes();      // ← NEW: floating wishes
+                        
+                        // Fade out polaroids after 30 seconds
+                        setTimeout(() => {
+                            const polaroids = document.querySelectorAll('.polaroid');
+                            polaroids.forEach((p, index) => {
+                                setTimeout(() => p.classList.add('fade-out'), index * 1500);
+                            });
+                        }, 30000);
+                        
                         // Trigger initial timeline check (now redundant but kept for safety)
                     }, 1400);
                 }, 1200);
@@ -976,10 +991,28 @@ Today is your day. Enjoy every moment. ❤️`;
             // =============== DIGITAL CAKE ===============
             function blowCandles() {
                 const candlesEl = document.getElementById('candles');
+                const btn = document.querySelector('.cake-btn');
+                
+                // If already blown, do nothing
+                if (candlesEl.style.opacity === '0') return;
+
+                // Show smoke
                 candlesEl.innerHTML = '💨 💨 💨 💨';
+                
+                // Fade out smoke after 1 second
+                setTimeout(() => { 
+                    candlesEl.style.opacity = '0'; 
+                }, 1000);
+                
+                // Update button text
+                if (btn) {
+                    btn.textContent = 'Yay! 🎉';
+                    btn.style.pointerEvents = 'none';
+                    btn.style.opacity = '0.7';
+                }
+
                 confetti({ particleCount: 280, spread: 110, origin: { y: 0.6 } });
                 launchFinale();
-                setTimeout(() => { candlesEl.innerHTML = '🕯️ 🕯️ 🕯️ 🕯️'; }, 4000);
             }
 
             // =============== NAME IN STARS – Canvas particle text animation ===============
